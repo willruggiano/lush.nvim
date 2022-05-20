@@ -4,6 +4,8 @@ local hsluv = require('lush.vivid.hsluv.type')
 local parser = require('lush.parser')
 local compiler = require('lush.compiler')
 
+local is_nvim = vim ~= nil
+
 local function merge_default_options(options)
   if not options then
     options = {
@@ -19,7 +21,7 @@ local insert_force_clean = function(compiled_ast)
       "hi clear",
       "set t_Co=256",
     }
-    if vim.g.colors_name then
+    if is_nvim and vim.g.colors_name then
       -- 'hi clear' will clear g:colors_name, so restore if it existed
       table.insert(clean, "let g:colors_name='" .. vim.g.colors_name.."'")
     end
@@ -158,7 +160,7 @@ M.extends = function(extends_list)
 end
 
 -- accepts a list of parsed specs, merges them in order
--- (equivilent to extends({...}).with(empty_spec))
+-- (equivalent to extends({...}).with(empty_spec))
 -- returns a parsed_lush_spec
 M.merge = function(extends_list)
   local options = {
